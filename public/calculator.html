@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 | JavaScript Calculator</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh; margin: 0; padding: 24px;
+      display: grid; place-items: center;
+      font-family: system-ui, Arial, sans-serif; color: #eef2ff;
+      background: radial-gradient(circle at 20% 15%, #41318b 0, transparent 35%),
+                  radial-gradient(circle at 80% 80%, #17687b 0, transparent 38%), #101428;
+    }
+    .calculator {
+      width: min(100%, 390px); padding: 28px; border: 1px solid #ffffff30;
+      border-radius: 28px; background: #ffffff12; backdrop-filter: blur(18px);
+      box-shadow: 0 25px 65px #0005;
+    }
+    .eyebrow { margin: 0 0 6px; color: #a7f3d0; font-size: 12px; font-weight: 800; letter-spacing: 3px; }
+    h1 { margin: 0 0 6px; font-size: 30px; }
+    .subtitle { margin: 0 0 24px; color: #cbd5e1; font-size: 14px; }
+    label { display: block; margin: 16px 0 8px; font-size: 14px; font-weight: 650; }
+    input, select {
+      width: 100%; padding: 14px 16px; border: 1px solid #ffffff45;
+      border-radius: 14px; outline: none; background: #11162bbd;
+      color: white; font: inherit;
+    }
+    input:focus, select:focus { border-color: #6ee7b7; box-shadow: 0 0 0 3px #6ee7b72b; }
+    input::placeholder { color: #94a3b8; }
+    .actions { display: flex; gap: 10px; margin-top: 24px; }
+    button {
+      border: 0; border-radius: 14px; padding: 14px 18px;
+      font: inherit; font-weight: 750; cursor: pointer;
+    }
+    #calculate { flex: 1; color: #102334; background: linear-gradient(120deg, #6ee7b7, #67e8f9); }
+    #clear { color: #eef2ff; background: #ffffff25; }
+    button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .result {
+      min-height: 100px; margin-top: 23px; padding: 18px;
+      border-radius: 18px; background: #0b1227a8; border: 1px solid #ffffff24;
+    }
+    .result span { display: block; margin-bottom: 8px; color: #b8c8dc; font-size: 13px; }
+    output { display: block; overflow-wrap: anywhere; color: #a7f3d0; font-size: 28px; font-weight: 800; }
+    output.error { color: #fda4af; font-size: 17px; }
+  </style>
+</head>
+<body>
+  <main class="calculator">
+    <p class="eyebrow">QUICK MATH</p>
+    <h1>Mini Calculator</h1>
+    <p class="subtitle">Choose an operation and let the numbers do their thing.</p>
+
+    <label for="firstNumber">First number</label>
+    <input id="firstNumber" type="number" step="any" placeholder="e.g. 24">
+
+    <label for="operation">Operation</label>
+    <select id="operation">
+      <option value="add">+ Addition</option>
+      <option value="subtract">− Subtraction</option>
+      <option value="multiply">× Multiplication</option>
+      <option value="divide">÷ Division</option>
+    </select>
+
+    <label for="secondNumber">Second number</label>
+    <input id="secondNumber" type="number" step="any" placeholder="e.g. 6">
+
+    <div class="actions">
+      <button id="calculate" type="button">Calculate →</button>
+      <button id="clear" type="button">Clear</button>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <span>RESULT</span>
+      <output id="answer">Your answer appears here</output>
+    </div>
+  </main>
+
+  <script>
+    // Each arithmetic operation has its own JavaScript function.
+    function add(a, b) { return a + b; }
+    function subtract(a, b) { return a - b; }
+    function multiply(a, b) { return a * b; }
+    function divide(a, b) { return a / b; }
+
+    const firstInput = document.getElementById('firstNumber');
+    const secondInput = document.getElementById('secondNumber');
+    const operationInput = document.getElementById('operation');
+    const answer = document.getElementById('answer');
+
+    function showResult(message, isError = false) {
+      answer.textContent = message;
+      answer.classList.toggle('error', isError);
+    }
+
+    function calculate() {
+      if (firstInput.value.trim() === '' || secondInput.value.trim() === '') {
+        showResult('Please enter both numbers.', true);
+        return;
+      }
+
+      const a = Number(firstInput.value);
+      const b = Number(secondInput.value);
+      let result;
+
+      // A switch statement chooses which function to call.
+      switch (operationInput.value) {
+        case 'add': result = add(a, b); break;
+        case 'subtract': result = subtract(a, b); break;
+        case 'multiply': result = multiply(a, b); break;
+        case 'divide':
+          if (b === 0) {
+            showResult('Cannot divide by zero.', true);
+            return;
+          }
+          result = divide(a, b);
+          break;
+        default:
+          showResult('Please choose an operation.', true);
+          return;
+      }
+
+      showResult(String(result));
+    }
+
+    document.getElementById('calculate').addEventListener('click', calculate);
+    document.getElementById('clear').addEventListener('click', function () {
+      firstInput.value = '';
+      secondInput.value = '';
+      operationInput.value = 'add';
+      showResult('Your answer appears here');
+      firstInput.focus();
+    });
+  </script>
+</body>
+</html>
